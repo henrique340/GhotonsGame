@@ -1,6 +1,7 @@
 from sys import exit
 from random import randint
 from textwrap import dedent
+from Gothans.Functions import *
 
 class Scene(object):
 
@@ -11,14 +12,15 @@ class Scene(object):
 
 class Death(Scene):
     quips = [
-        "You died. You kinda suck at this"
-        "Your mom would be proud... If she were smarter"
-        "Such a luser"
-        "I have a small puppy that's better at this"
+        "You died. You kinda suck at this\n"
+        "Your mom would be proud... If she were smarter\n"
+        "Such a luser\n"
+        "I have a small puppy that's better at this\n"
         "You're worse than your Dad's jokes"
     ]
 
     def enter(self):
+        title("Death")
         print(Death.quips[randint(0, len(self.quips) - 1)])
         exit(1)
 
@@ -26,6 +28,7 @@ class Death(Scene):
 class CentralCorridor(Scene):
 
     def enter(self):
+        title("Central Corridor")
         print(dedent("""
             The Gothons of Planet Percal #25 have invaded your ship and
             destroyed your entire crew.
@@ -37,6 +40,9 @@ class CentralCorridor(Scene):
             Gothon jumps out, red scaly skin, dark grimy teeth, and evil clown 
             costume flowing around his hate filled body. He's blocking the door to
             the Armory and about to pull a weapon to blast you
+            
+            Options:
+            [shoot] [dodge] [tell a joke]
         """))
 
         action = input('> ')
@@ -85,6 +91,7 @@ class CentralCorridor(Scene):
 class LaserWeaponArmory(Scene):
 
     def enter(self):
+        title("LaserWeaponArmory")
         print(dedent("""
             You do a dive roll into the Weapon Armory, crouch and scan
             the room for more Gothons that might be hiding. It's dead
@@ -96,24 +103,30 @@ class LaserWeaponArmory(Scene):
             code is 3 digits
         """))
 
-        code = f'`{randint(1, 9)}{randint(1, 9)}{randint(1, 9)}'
-        guess = input("[keypad]> ")
+        code = f'{randint(1, 9)}{randint(1, 9)}{randint(1, 9)}'
         guesses = 0
+        guess = input(f"[try] {guesses+1}> ")
 
-        while guess != code and guesses < 10:
-            print("BZZZZZEDDDD!!")
-            guesses += 1
-            guess = input("[keypad]> ")
-
+        while guess != code and guesses < 9:
+            if guess < code:
+                print("The number is higher!")
+                guesses += 1
+                guess = input(f"[try] {guesses+1}> ")
+            elif guess > code:
+                print("The number is lower!")
+                guesses += 1
+                guess = input(f"[try] {guesses+1}> ")
+            else:
+                print('DOES NOT COMPUTE!!')
+                return 'laser_weapon_armory'
         if guess == code:
-            print(dedent("""
-                The container clicks open and the seal breaks, letting
-                gas out. You grab the neutron bomb and run as fast as
-                you can to the bridge where you must place it in the
-                right spot.
-            """))
-            return 'the_bridge'
-
+                print(dedent("""
+                    The container clicks open and the seal breaks, letting
+                    gas out. You grab the neutron bomb and run as fast as
+                    you can to the bridge where you must place it in the
+                    right spot.
+                """))
+                return 'the_bridge'
         else:
             print(dedent("""
                 The lock buzzes one last time and then you hear a 
@@ -127,6 +140,7 @@ class LaserWeaponArmory(Scene):
 class TheBridge(Scene):
 
     def enter(self):
+        title("The Bridge")
         print(dedent("""
             You burst onto the Bridge with the neutron destruct bomb
             under your arm and surprise 5 Gothons who are trying to
@@ -134,6 +148,9 @@ class TheBridge(Scene):
             clown costume than the last. They haven't pulled their 
             weapons out yet, as they see the active bomb under your 
             arm and don't want to set it off 
+            
+            options:
+            [throw the bomb] [slowly place the bomb]
         """))
 
         action = input('> ')
@@ -163,12 +180,13 @@ class TheBridge(Scene):
 
         else:
             print('DOES NOT COMPUTE!!')
-            print('the_bridge')
+            return 'the_bridge'
 
 
 class EscapePod(Scene):
 
     def enter(self):
+        title("Escape Pod")
         print(dedent("""
             You rush through the ship desperately trying to make it to 
             the escape pod before the whole ship explodes. It seems
@@ -183,7 +201,7 @@ class EscapePod(Scene):
         guess = input('> ')
 
         if int(guess) != good_pod:
-            print(dedent("""
+            print(dedent(f"""
                 You jump into pod {guess} and hit the eject button.
                 The pod escapes out into the void of scape, then
                 implodes as the hull ruptures, crushing your body into
@@ -192,7 +210,7 @@ class EscapePod(Scene):
             return 'death'
 
         else:
-            print(dedent("""
+            print(dedent(f"""
                 You jump into pod {guess} and hit the eject button.
                 The pod easily slides out into space heading to the
                 planet below. As it flies to the planet, you look
@@ -206,5 +224,6 @@ class EscapePod(Scene):
 class Finished(Scene):
 
     def enter(self):
+        principalTitle("Finished")
         print('You won!! Good job')
         return 'finished'
